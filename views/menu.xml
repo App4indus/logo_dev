@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+
+		<!-- Logo.dev configuration -->
+		<menuitem name="Logo.dev" id="logo_dev_root_a4i" parent="base.menu_administration" sequence="200"/>
+		<menuitem name="Configuration" id="logo_dev_config_a4i" parent="logo_dev_root_a4i" action="act_logo_dev_config" sequence="30"/>
+
+	</data>
+</openerp>
