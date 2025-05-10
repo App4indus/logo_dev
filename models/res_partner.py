@@ -14,6 +14,8 @@ class a4i_logo_dev_res_partner(models.Model):
     # COLUMNS
     # ===========================================================================
 
+    logo_dev_sync_date = fields.Datetime(string='Logo.dev sync date', help='Date of the last sync with logo.dev')
+
     # ===========================================================================
     # METHODS
     # ===========================================================================
@@ -31,7 +33,7 @@ class a4i_logo_dev_res_partner(models.Model):
             else:
                 logo = self.env['a4i.logo.dev'].get_logo_company(domain=partner.website)
                 if logo:
-                    partner.image = logo
+                    partner.write({'image': logo, 'logo_dev_sync_date': fields.Datetime.now()})
                 else:
                     raise ValidationError(_("No logo found for the company"))
                 
@@ -40,13 +42,26 @@ class a4i_logo_dev_res_partner(models.Model):
         """
         Cron job to sync the logo of the company
         """
-        partners = self.env['res.partner'].search([('is_company', '=', True), ('website', '!=', False)])
 
-        try:
-            for partner in partners:
-                partner.get_logo_company()
-        except Exception as e:
-            LOG.error("Error syncing logo for partner %s: %s", partner.name, e)
-            pass
+        LOG.info("Starting cron job to sync the logo of the company")
+
+        partners = self.env['res.partner'].search([('is_company', '=', True), ('website', '!=', False)], order='logo_dev_sync_date ASC')
+
+        for partner in partners:
+
+            # Check the limit of requests
+            if self.env['a4i.logo.dev.config'].check_and_update_request_limit():
+
+                try:
+                    partner.get_logo_company()
+                except Exception as e:
+                    LOG.error("Error syncing logo for partner %s: %s", partner.name, e)
+                    return False
+            
+            else:
+                LOG.info("Limit of requests reached.")
+                return True
+            
+        LOG.info("Cron job to sync the logo of the company finished")
 
         return True

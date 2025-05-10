@@ -26,6 +26,8 @@ class a4i_logo_dev_config(models.Model):
     logo_dev_private_api_key = fields.Char(string='Logo.dev Private API Key', help='Private API Key of the logo.dev service')
     logo_dev_daily_requests = fields.Integer(string='Daily requests', help='Number of requests made today', default=0)
     logo_dev_last_request_date = fields.Date(string='Last request date', help='Date of the last request', default=fields.Date.today)
+    total_count_requests = fields.Integer(string='Total requests', help='Total number of requests made', default=0)
+    max_limit_requests_daily = fields.Integer(string='Max limit requests daily', help='Max limit of requests daily', default=5000)
 
     # ===========================================================================
     # METHODS
@@ -50,12 +52,20 @@ class a4i_logo_dev_config(models.Model):
             })
         
         # Check if we've reached the limit
-        if active_config.logo_dev_daily_requests >= 5000:
-            raise ValidationError(_("Daily request limit (5000) has been reached. Please try again tomorrow."))
+        if active_config.logo_dev_daily_requests >= active_config.max_limit_requests_daily:
+            raise ValidationError(_("Daily request limit has been reached. Please try again tomorrow."))
         
         # Increment the counter
         active_config.logo_dev_daily_requests += 1
         return True
+    
+    @api.multi
+    def increment_total_count_requests(self):
+        active_config = self.search([('state', '=', 'active')], limit=1)
+        if active_config:
+            active_config.write({
+                'total_count_requests': active_config.total_count_requests + 1
+            })
 
     @api.multi
     def get_url_logo_dev(self):

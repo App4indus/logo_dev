@@ -59,12 +59,24 @@ class a4i_logo_dev(models.Model):
         # Add parameters to the url
         url = url + '?' + '&'.join(['{}={}'.format(key, value) for key, value in params.items()])
 
-        response = requests.get(url)
-        response.raise_for_status()
+        try:
 
-        if response.status_code == 200:
-            # Encode the image to base64
-            image_base64 = base64.b64encode(response.content)
-            return image_base64
-        else:
+            LOG.debug("Sending request to logo.dev: %s", url)
+
+            response = requests.get(url)
+            response.raise_for_status()
+
+            if response.status_code == 200:
+                # Encode the image to base64
+                image_base64 = base64.b64encode(response.content)
+
+                # Increment the total count requests
+                self.env['a4i.logo.dev.config'].increment_total_count_requests()
+
+                return image_base64
+            else:
+                return False
+            
+        except Exception as e:
+            LOG.error("Error getting logo from logo.dev: %s", e)
             return False
