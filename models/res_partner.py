@@ -45,7 +45,7 @@ class a4i_logo_dev_res_partner(models.Model):
 
         LOG.info("Starting cron job to sync the logo of the company")
 
-        partners = self.env['res.partner'].search([('is_company', '=', True), ('website', '!=', False)], order='logo_dev_sync_date ASC')
+        partners = self.env['res.partner'].search([('is_company', '=', True), ('website', '!=', None)], order='logo_dev_sync_date ASC')
 
         for partner in partners:
 
@@ -56,7 +56,7 @@ class a4i_logo_dev_res_partner(models.Model):
                     partner.get_logo_company()
                 except Exception as e:
                     LOG.error("Error syncing logo for partner %s: %s", partner.name, e)
-                    return False
+                    continue
             
             else:
                 LOG.info("Limit of requests reached.")
