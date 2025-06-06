@@ -21,7 +21,9 @@ class a4i_logo_dev(models.Model):
     @api.multi
     def get_logo_company(self, domain):
         """
-        Get the logo from logo.dev
+        Role : Get the logo from logo.dev
+        Parameters : domain (str) - The domain of the company (e.g. "www.google.com")
+        Return : image_base64 (str) - The base64 of the logo
         """
 
         # Check if the domain is valid
@@ -44,7 +46,6 @@ class a4i_logo_dev(models.Model):
 
         base_url = self.env['a4i.logo.dev.config'].get_url_logo_dev()
         token = self.env['a4i.logo.dev.config'].get_public_api_key()
-
         url = base_url + domain
 
         # Set parameters

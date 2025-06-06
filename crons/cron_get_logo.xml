@@ -3,16 +3,19 @@
     <data noupdate="0">
         <!-- Cron job for fetching logos -->
         <record id="ir_cron_sync_logo" model="ir.cron">
-            <field name="name">Sync Logo</field>
+            <field name="name">Get companies logos from logo.dev service</field>
             <field name="model">res.partner</field>
             <field name="state">code</field>
             <field name="function">cron_sync_logo</field>
             <field name="user_id" ref="base.user_root"/>
             <field name="interval_number">1</field>
-            <field name="interval_type">hours</field>
+            <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active" eval="True"/>
-            <field name="comment">Cron which fetch objects from logo.dev.</field>
+            <field name="priority">10</field>
+            <field name="args" eval="[(False,)]"/>
+            <field name="comment">Cron which fetch companies logos from logo.dev service. Parameters : update_logo (bool) - If True, the logo will be updated even if it already exists. Example : (False,) or (True,)
+            </field>
         </record>
     </data>
 </openerp>

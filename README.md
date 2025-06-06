@@ -13,9 +13,9 @@
 
 ## Fonctionnalités
 
-- **Intégration des logos** : Il est possible d'intégrer les logos de vos partenaires dans leurs fiches respectives.
+- **Intégration des logos** : Il est possible d'intégrer les logos de vos partenaires dans leurs fiches respectives, grâce au champ Site web.
 
-- **Automatisation** : Un cron permet de récupérer automatiquement les logos : jusqu'à 5.000 logos par jour.
+- **Automatisation** : Un cron permet de récupérer automatiquement les logos : jusqu'à 5.000 logos par jour pour l'usage gratuit de l'API.
 
 ## Dépendances
 
